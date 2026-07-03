@@ -219,12 +219,14 @@ src/
   - 名称不为空时：按钮显示"新增"，无特效
   - 提交时后端根据 name 字段是否为空判断是否自动获取名称
 - 首页"我的部落"点击部落名跳转到部落对战记录页
+- `clan.is_global` 表示该部落所在服务器：`true`=国际服(Global)，`false`=中国服(China)
+- 所有部落卡片均显示服务器标签，使用 `clan.is_global` / `clan.server_china` 键
 
 #### 部落对战记录 (ClanTrack)
 - 路径：`/clan-track/:id`，首页部落卡片点击进入
-- 展示该部落的所有对战记录，自动判定胜负视角
-- 顶部统计：胜利 / 失败 / 奖励 / 惩罚 / 其他
-- 展示双方部落、历史积分、当前积分、轮次、奖励信息
+- 展示该部落的所有对战记录，自动判定胜负视角（`getWinLose` 函数以当前帮派为准，不依赖 DB `self_clan_id` 固定视角）
+- 顶部队列：胜 / 负 / 奖励 / 惩罚 / 其他
+- 展示双方部落、tag、历史积分→当前积分(+diff)、奖励变动；始终以当前帮派为主视角排在第一行
 
 #### 用户管理 (User)
 - 仅管理员可见
@@ -282,6 +284,7 @@ src/
 #### 功能未完成
 - **Settings.tsx** — 修改密码和保存个人资料使用 `alert()` 占位，未调 API
 - **RoundAdd.tsx/ClanAdd.tsx/ClanEdit.tsx/UserAdd.tsx/UserEdit.tsx** — success 检测依赖翻译值比较，建议改为判断 API 返回码
+- 登录日志（LoginLog）IP 地理位置显示为可选功能，需后端支持
 
 ### 搜索接口说明
 - 部落搜索 `POST /orange/clan_search` 和用户搜索 `POST /system/user_search` 的请求体为**原始 JSON 字符串**（如 `"keyword"`），而非 JSON 对象

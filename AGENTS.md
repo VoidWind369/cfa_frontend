@@ -51,6 +51,18 @@
 ## 组件新增
 - `src/contexts/SidebarContext.tsx` — 侧边栏状态上下文，供各页面菜单按钮使用
 
+## 服务器标签（部落管理）
+- `clan.is_global` 表示"国际服"（Global server），反之表示"中国服"（China server）
+- 所有部落卡片都必须显示服务器标签，英文用 Global / China，中文用 国际服 / 中国服
+- 相关 locale 键：`clan.is_global`（国际服）、`clan.server_china`（中国服）
+
+## 公共对战查询（MiddleTrack）
+- `explain` 字段为辅助文本，必须显示为小号灰色文字 `text-xs text-brand-textLight/60`，不得使用 Badge 或颜色包裹
+
+## 用户管理（UserList）
+- `code` 字段是登录用户名，前面不得加 `#` 前缀
+- 其重要性与 email 同级，显示顺序为 email → code → time
+
 ## 部落新增按钮智能逻辑
 - 新增部落页面（ClanAdd.tsx）只有一个提交按钮
 - 根据部落名称是否为空动态改变：
