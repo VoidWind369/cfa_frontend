@@ -110,7 +110,7 @@
   - 移动端：顶部 sticky 头部 + 抽屉式侧边栏 + 遮罩层
   - 尊重 `prefers-reduced-motion` 系统设置
 - **Sticky Header**:
-  - 各页面顶部使用 `sticky top-0 backdrop-blur-md` 实现滚动虚化效果
+  - 各页面顶部使用 `sticky top-0 backdrop-blur-md` 实现滚动虚化效果（除 Dashboard、Login 外全局覆盖）
   - 移动端菜单按钮集成在页面头部行内，无独立顶部导航栏
   - DashboardLayout 控制统一顶部留白：`pt-8 sm:pt-10 lg:pt-12`
 
@@ -147,9 +147,9 @@ src/
 │   │   ├── ClanEdit.tsx    # 编辑部落（状态修改/删除，管理员可见操作）
 │   │   └── ClanTrack.tsx   # 部落对战记录（首页部落名点击进入）
 │   ├── user/
-│   │   ├── UserList.tsx    # 用户管理（列表 + 搜索，仅管理员可见）
+│   │   ├── UserList.tsx    # 用户管理（列表 + 搜索，单 Card divide-y 布局）
 │   │   ├── UserAdd.tsx     # 新增用户（管理员）
-│   │   └── UserEdit.tsx    # 编辑用户（资料/密码/状态/删除）
+│   │   └── UserEdit.tsx    # 编辑用户（资料/密码/状态，管理员可修改 status）
 │   ├── track/
 │   │   ├── TrackList.tsx    # 对战记录（列表，仅管理员可见）
 │   │   ├── TrackInsert.tsx  # 登记对战（管理员，手动输入双方标签）
@@ -231,9 +231,11 @@ src/
 #### 用户管理 (User)
 - 仅管理员可见
 - 支持按姓名或邮箱搜索
-- 用户状态：活跃/待审核/未激活
+- 用户状态：活跃(1) / 未激活(0) / 待审核(2)
 - 管理员可新增、编辑（资料/密码/状态）、删除用户
-- 普通用户可编辑自己的资料和密码
+- 编辑页（UserEdit）管理员使用 `Select` 组件修改用户 status
+- 普通用户可编辑自己的资料和密码（仅本人页面可见）
+- 列表布局：单 Card + `divide-y divide-brand-border` + 方形头像 + 编辑/删除按钮
 
 #### 对战记录 (Track)
 - 仅管理员可见
@@ -258,6 +260,7 @@ src/
 - 使用 MessagePack 格式传输
 - 支持瀑布流加载（IntersectionObserver）
 - 支持按用户编码搜索（搜索时不分页）
+- 列表布局：单 Card + `divide-y divide-brand-border` 方形头像（参考 OperateLog 风格）
 
 #### 公共对战查询 (MiddleTrack)
 - 输入部落标签查询公共积分数据

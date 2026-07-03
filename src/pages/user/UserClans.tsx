@@ -103,7 +103,7 @@ const UserClansPage = () => {
               {t('common.back')}
             </Link>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-text mt-3">{t('user.clan_bind')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-brand-text mt-3 flex items-center gap-2"><Users className="w-5 h-5 text-brand-primary shrink-0" />{t('user.clan_bind')}</h1>
           <p className="text-brand-textLight text-sm mt-1">{t('user.clan_bind_subtitle')}</p>
         </header>
 

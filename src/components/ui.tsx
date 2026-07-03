@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Loader2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, AlertTriangle } from 'lucide-react';
 
 interface CardProps {
   children: React.ReactNode;
@@ -88,9 +88,10 @@ export const Button = ({
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  suffix?: React.ReactNode;
 }
 
-export const InputField = ({ label, error, className = "", ...props }: InputProps) => (
+export const InputField = ({ label, error, suffix, className = "", ...props }: InputProps) => (
   <div className="mb-4">
     {label && (
       <label className="block text-xs font-semibold text-brand-text mb-1.5 ml-1">
@@ -107,11 +108,17 @@ export const InputField = ({ label, error, className = "", ...props }: InputProp
           text-sm text-brand-text placeholder:text-brand-textLight
           backdrop-blur-sm
           hover:border-brand-soft/60
+          ${suffix ? 'pr-12' : ''}
           ${error ? 'border-brand-error/50 focus:ring-brand-error/30 focus:border-brand-error/50 focus:shadow-brand-error/10' : ''}
           ${className}
         `}
         {...props}
       />
+      {suffix && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          {suffix}
+        </div>
+      )}
     </div>
     {error && (
       <p className="mt-1.5 ml-1 text-xs text-brand-error animate-slide-down">{error}</p>
@@ -338,6 +345,55 @@ export const Pagination = ({ page, pageSize, total, onPageChange, className = ""
         >
           <ChevronsRight className="w-4 h-4" />
         </button>
+      </div>
+    </div>
+  );
+};
+
+interface ConfirmModalProps {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  loading?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+export const ConfirmModal = ({
+  open,
+  title,
+  message,
+  confirmText,
+  cancelText,
+  loading = false,
+  onConfirm,
+  onCancel,
+}: ConfirmModalProps) => {
+  const { t } = useTranslation();
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onCancel} />
+      <div className="relative bg-white/90 backdrop-blur-xl border border-white/70 rounded-3xl shadow-float p-6 max-w-sm w-full animate-slide-up">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+          </div>
+          <h3 className="font-semibold text-brand-text text-base">{title}</h3>
+        </div>
+        <p className="text-sm text-brand-textLight ml-[3.25rem]">{message}</p>
+        <div className="flex justify-end gap-2 mt-5">
+          <Button variant="secondary" onClick={onCancel}>
+            {cancelText || t('common.cancel')}
+          </Button>
+          <Button variant="danger" onClick={onConfirm} loading={loading}>
+            {confirmText || t('common.confirm')}
+          </Button>
+        </div>
       </div>
     </div>
   );

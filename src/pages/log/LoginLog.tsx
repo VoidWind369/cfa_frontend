@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { Card, Badge } from '../../components/ui';
+import { Card } from '../../components/ui';
 import { useUserStore } from '../../store/user';
 import { logApi } from '../../api';
 import type { LoginLogInfo } from '../../types';
@@ -11,7 +11,6 @@ import {
   Search,
   MapPin,
   Clock,
-  User,
   Loader2,
   Menu,
 } from 'lucide-react';
@@ -127,7 +126,7 @@ const LoginLogPage = () => {
               <Menu className="w-5 h-5 text-brand-text" />
             </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('log.login_title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><History className="w-5 h-5 text-brand-primary shrink-0" />{t('log.login_title')}</h1>
               <p className="text-brand-textLight text-sm mt-1">
                 {t('log.login_subtitle')}
                 {!search && total > 0 && (
@@ -170,38 +169,35 @@ const LoginLogPage = () => {
         </Card>
       ) : (
         <>
-          <div className="space-y-3">
-            {logs.map((log, i) => (
-              <Card key={i} className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-brand-soft/50 flex items-center justify-center text-sm font-bold text-brand-primary flex-shrink-0">
-                    {log.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-brand-text text-base">{log.name}</h4>
-                      <Badge type="default">#{log.code}</Badge>
+          <Card className="overflow-hidden">
+            <div className="divide-y divide-brand-border">
+              {logs.map((log, i) => (
+                <div key={i} className="p-5 hover:bg-brand-muted/20 transition-colors">
+                  <div className="flex items-start gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-xl bg-stone-50 flex items-center justify-center shrink-0">
+                      <History className="w-4 h-4 text-stone-500" strokeWidth={1.8} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-brand-textLight">
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-semibold text-brand-text truncate">{log.name}</h4>
+                      <p className="text-xs text-brand-textLight font-mono">#{log.code}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 ml-12">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-1.5 text-xs text-brand-textLight">
+                        <MapPin className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
                         <span className="truncate">{log.address || '-'}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
-                        <span>{timeParse(log.login_time)}</span>
-                      </div>
                     </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                      <User className="w-4 h-4 text-green-500" strokeWidth={1.5} />
+                    <div className="flex items-center gap-1.5 text-xs text-brand-textLight">
+                      <Clock className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
+                      {timeParse(log.login_time)}
                     </div>
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Card>
 
           {/* 瀑布流底部 */}
           {!search && (

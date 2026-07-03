@@ -115,7 +115,7 @@ const RoundPage = () => {
               <Menu className="w-5 h-5 text-brand-text" />
             </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('round.title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><CalendarClock className="w-5 h-5 text-brand-primary shrink-0" />{t('round.title')}</h1>
               <p className="text-brand-textLight text-sm mt-1">
                 {t('round.subtitle')}
                 {total > 0 && (

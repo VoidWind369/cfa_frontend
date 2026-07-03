@@ -47,6 +47,12 @@
 - 移动端菜单按钮集成在页面头部行内，使用 `useSidebar()` hook 控制侧边栏
 - DashboardLayout 控制统一顶部留白：移动端 `pt-8`，平板 `pt-10`，桌面端 `pt-12`
 - SidebarContext.tsx 提供全局侧边栏状态管理，所有页面共享同一个侧边栏状态
+- 涉及页面：ClanList / ClanAdd / ClanEdit / ClanTrack / UserList / UserAdd / UserEdit / UserClans / TrackList / TrackInsert / RoundList / RoundAdd / OperateLog / LoginLog / MiddleTrack / ReadCompo / Settings
+
+## 页面标题图标
+- 所有页面 `<h1>` 标题前添加主题色图标：`<Icon className="w-5 h-5 text-brand-primary shrink-0" />`
+- `h1` className 必须包含 `flex items-center gap-2` 使图标与文字对齐
+- 图标选取原则：图标内容与页面功能语义对应（如 ClanList=Flag, TrackList=Swords, Settings=Settings）
 
 ## 组件新增
 - `src/contexts/SidebarContext.tsx` — 侧边栏状态上下文，供各页面菜单按钮使用
@@ -62,6 +68,10 @@
 ## 用户管理（UserList）
 - `code` 字段是登录用户名，前面不得加 `#` 前缀
 - 其重要性与 email 同级，显示顺序为 email → code → time
+- 列表采用单 Card + `divide-y divide-brand-border` 布局（参考 OperateLog 风格）
+- 每个用户项右侧有编辑按钮（`Edit` 图标，链接到 `/user-update/:id`）和删除按钮
+- 编辑页（UserEdit）管理员可修改用户 status：使用 `Select` 组件提供 Active/Inactive/Pending 三项
+- 权限模型：普通用户只能编辑自己的资料和密码；管理员可修改 code/email/status/password
 
 ## 部落新增按钮智能逻辑
 - 新增部落页面（ClanAdd.tsx）只有一个提交按钮
@@ -74,3 +84,14 @@
 - 修改代码后运行 `npm run build` 确保构建通过
 - 类型检查：`npx tsc --noEmit`
 - 开发服务器：`npm run dev`
+
+## 列表页 UI 规范
+- 列表页（UserList、LoginLog、OperateLog 等）使用单 Card + `divide-y divide-brand-border` 布局
+- 每项使用 `p-5 hover:bg-brand-muted/20 transition-colors` 的行样式
+- 头像采用方形 `w-9 h-9 rounded-xl bg-stone-50` + 灰度图标
+- 信息分两段：上段 `flex items-start gap-3`（avatar + title），下段 `flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 ml-12`（badges + timestamp）
+
+## 主题背景
+- 页面背景使用 `linear-gradient(to right, ...)` 左右渐变方向
+- 左侧淡粉 → 中间透明 → 右侧淡紫
+- 底部保留弱径向渐变增强层次感

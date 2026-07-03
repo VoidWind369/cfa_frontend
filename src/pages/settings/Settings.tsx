@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, InputField, Select, Button, Toggle } from '../../components/ui';
 import { useUserStore } from '../../store/user';
 import { userApi } from '../../api';
-import { User, Globe, Lock, Bell, Save, Menu } from 'lucide-react';
+import { User, Globe, Lock, Bell, Save, Menu, Settings } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
 const SettingsPage = () => {
@@ -59,7 +59,7 @@ const SettingsPage = () => {
             <Menu className="w-5 h-5 text-brand-text" />
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('settings.title')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><Settings className="w-5 h-5 text-brand-primary shrink-0" />{t('settings.title')}</h1>
             <p className="text-brand-textLight text-sm mt-1">{t('settings.subtitle')}</p>
           </div>
         </header>

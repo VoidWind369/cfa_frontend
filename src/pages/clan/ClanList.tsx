@@ -146,7 +146,7 @@ const ClanPage = () => {
               <Menu className="w-5 h-5 text-brand-text" />
             </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('clan.title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><Flag className="w-5 h-5 text-brand-primary shrink-0" />{t('clan.title')}</h1>
               <p className="text-brand-textLight text-sm mt-1">
                 {t('clan.subtitle')}
                 {!search && total > 0 && (

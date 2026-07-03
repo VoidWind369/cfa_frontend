@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, InputField, Button } from '../../components/ui';
 import { userApi } from '../../api';
-import { ArrowLeft, Plus, Menu } from 'lucide-react';
+import { ArrowLeft, Plus, Menu, UserPlus } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
 const UserAddPage = () => {
@@ -71,7 +71,7 @@ const UserAddPage = () => {
             <ArrowLeft className="w-5 h-5 text-brand-text" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('user.add_user')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><UserPlus className="w-5 h-5 text-brand-primary shrink-0" />{t('user.add_user')}</h1>
             <p className="text-brand-textLight text-sm mt-1">{t('user.add_user_subtitle')}</p>
           </div>
         </div>

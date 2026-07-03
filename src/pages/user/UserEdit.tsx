@@ -6,7 +6,7 @@ import { userApi } from '../../api';
 import { useUserStore } from '../../store/user';
 import { timeParse } from '../../api/request';
 import type { UserInfo } from '../../types';
-import { ArrowLeft, Save, Trash2, Menu } from 'lucide-react';
+import { ArrowLeft, Save, Menu, User } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
 const UserEditPage = () => {
@@ -53,6 +53,7 @@ const UserEditPage = () => {
       };
       if (isAdmin) {
         updateData.code = user.code;
+        updateData.status = user.status;
       }
       if (password) {
         updateData.password = password;
@@ -66,19 +67,6 @@ const UserEditPage = () => {
     } catch (e) {
       setMessage(t('common.failed'));
     } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!user || !isAdmin) return;
-    if (!confirm(t('user.confirm_delete'))) return;
-    setSaving(true);
-    try {
-      await userApi.delete(user.id!);
-      navigate('/user');
-    } catch (e) {
-      setMessage(t('common.failed'));
       setSaving(false);
     }
   };
@@ -112,13 +100,13 @@ const UserEditPage = () => {
               <Menu className="w-5 h-5 text-brand-text" />
             </button>
             <button
-              onClick={() => navigate('/user')}
+              onClick={() => navigate(-1)}
               className="p-2 rounded-xl hover:bg-brand-muted/60 transition-colors shrink-0"
             >
               <ArrowLeft className="w-5 h-5 text-brand-text" />
             </button>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-brand-text truncate">{user.name || '...'}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-text truncate flex items-center gap-2"><User className="w-5 h-5 text-brand-primary shrink-0" />{user.name || '...'}</h1>
               <p className="text-brand-textLight text-sm mt-1 truncate">{user.email}</p>
             </div>
           </div>
@@ -134,17 +122,18 @@ const UserEditPage = () => {
               </label>
               <p className="text-sm font-medium text-brand-text font-mono">{user.code}</p>
             </div>
-            <Select
-              label={t('user.status')}
-              value={String(user.status)}
-              onChange={(e) => setUser({ ...user, status: Number(e.target.value) })}
-              disabled={!isAdmin}
-              options={[
-                { value: '1', label: t('user.status_active') },
-                { value: '2', label: t('user.status_pending') },
-                { value: '0', label: t('user.status_inactive') },
-              ]}
-            />
+            <div>
+              <Select
+                label={t('user.status')}
+                value={String(user.status ?? 2)}
+                onChange={(e) => setUser({ ...user, status: Number(e.target.value) })}
+                options={[
+                  { value: '1', label: t('user.status_active') },
+                  { value: '0', label: t('user.status_inactive') },
+                  { value: '2', label: t('user.status_pending') },
+                ]}
+              />
+            </div>
           </div>
         )}
 
@@ -193,22 +182,14 @@ const UserEditPage = () => {
         </div>
       </Card>
 
-      <div className="flex justify-between">
-        {isAdmin && (
-          <Button variant="danger" onClick={handleDelete} loading={saving}>
-            <Trash2 className="w-4 h-4" />
-            {t('common.delete')}
-          </Button>
-        )}
-        <div className="flex gap-2 ml-auto">
-          <Button variant="secondary" onClick={() => navigate(-1)}>
-            {t('common.back')}
-          </Button>
-          <Button onClick={handleSave} loading={saving}>
-            <Save className="w-4 h-4" />
-            {t('common.save')}
-          </Button>
-        </div>
+      <div className="flex justify-end gap-2">
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          {t('common.back')}
+        </Button>
+        <Button onClick={handleSave} loading={saving}>
+          <Save className="w-4 h-4" />
+          {t('common.save')}
+        </Button>
       </div>
 
       {message && (

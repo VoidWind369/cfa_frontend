@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, InputField, Button } from '../../components/ui';
 import { clanApi } from '../../api';
-import { ArrowLeft, Wand2, Menu } from 'lucide-react';
+import { ArrowLeft, Wand2, Menu, Flag } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
 const ClanAddPage = () => {
@@ -60,7 +60,7 @@ const ClanAddPage = () => {
             <ArrowLeft className="w-5 h-5 text-brand-text" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-brand-text">{t('clan.add_clan')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-brand-text flex items-center gap-2"><Flag className="w-5 h-5 text-brand-primary shrink-0" />{t('clan.add_clan')}</h1>
             <p className="text-brand-textLight text-sm mt-1">{t('clan.add_clan_subtitle')}</p>
           </div>
         </div>

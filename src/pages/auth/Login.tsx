@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, InputField } from '../../components/ui';
-import { Globe, CircleDot, Sparkles, Shield, Zap, X, AlertCircle } from 'lucide-react';
+import { Globe, CircleDot, Sparkles, Shield, Zap, X, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../../api';
 import { useUserStore } from '../../store/user';
 
 const REMEMBERED_EMAIL_KEY = 'cfa_remembered_email';
+const REMEMBERED_PASSWORD_KEY = 'cfa_remembered_password';
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const { i18n, t } = useTranslation();
@@ -83,14 +84,17 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [loading, setLoading] = useState(false);
 
-  // 页面加载时读取保存的邮箱
+  // 页面加载时读取保存的账号密码
   useEffect(() => {
     const savedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    const savedPassword = localStorage.getItem(REMEMBERED_PASSWORD_KEY);
     if (savedEmail) {
       setEmail(savedEmail);
+      setPassword(savedPassword || '');
       setRemember(true);
     }
   }, []);
@@ -121,11 +125,12 @@ const LoginPage = () => {
     try {
       const userData = await authApi.login(email, password);
       if (userData && userData.token) {
-        // 记住我功能：保存或清除邮箱
         if (remember) {
           localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+          localStorage.setItem(REMEMBERED_PASSWORD_KEY, password);
         } else {
           localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+          localStorage.removeItem(REMEMBERED_PASSWORD_KEY);
         }
         setUser(userData);
         navigate('/');
@@ -188,11 +193,20 @@ const LoginPage = () => {
           />
           <InputField
             label={t('auth.password')}
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder={t('auth.password_placeholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
+            suffix={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="p-1 rounded-lg text-brand-textLight hover:text-brand-text hover:bg-brand-muted/60 transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            }
           />
 
           {/* 记住我 - 使用与整体风格统一的玻璃拟态开关 */}
