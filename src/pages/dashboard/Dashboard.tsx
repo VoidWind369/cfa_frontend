@@ -84,7 +84,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-full pb-8">
+    <div className="min-h-full">
       {/* Sticky header area */}
       <div className="sticky top-0 z-10 backdrop-blur-md -mx-3 sm:-mx-6 lg:-mx-8 px-3 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-4 sm:pb-5 mb-6">
         <section className="mb-0">

@@ -270,7 +270,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       <main className="lg:ml-64 min-h-screen">
-        <div className="animate-page-enter px-3 sm:px-6 lg:px-8">
+        <div className="animate-page-enter px-3 sm:px-6 lg:px-8 pb-8">
           {children}
         </div>
       </main>
