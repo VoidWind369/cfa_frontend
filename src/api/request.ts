@@ -102,6 +102,16 @@ export const del = async <T>(url: string, options?: { data?: any }): Promise<T> 
   return res.data;
 };
 
+export const head = async (url: string): Promise<boolean> => {
+  try {
+    const res = await api.head(url);
+    return res.status === 200;
+  } catch (e: any) {
+    if (e?.response?.status === 401) return false;
+    return true;
+  }
+};
+
 // ============ 公开接口方法（使用 public token）============
 
 export const getPublic = async <T>(url: string, publicToken: string): Promise<T> => {

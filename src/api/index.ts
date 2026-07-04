@@ -1,4 +1,4 @@
-import { get, post, postRaw, put, del, getPublic, postPublicRaw, getMsgpack, postLoginMsgpack, PUBLIC_TOKEN } from './request';
+import { get, post, postRaw, put, del, head, getPublic, postPublicRaw, getMsgpack, postLoginMsgpack, PUBLIC_TOKEN } from './request';
 import type {
   UserSession,
   RestApi,
@@ -20,6 +20,8 @@ export const authApi = {
     postLoginMsgpack<UserSession>('system/login', { email, password }),
 
   logout: () => del<void>('system/login'),
+
+  checkSession: () => head('system/login'),
 };
 
 // ============ 部落接口 ============

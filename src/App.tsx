@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from './components/DashboardLayout';
 import LoginPage from './pages/auth/Login';
@@ -21,6 +22,7 @@ import SettingsPage from './pages/settings/Settings';
 import MiddleTrackPage from './pages/middle/MiddleTrack';
 import ReadCompoPage from './pages/middle/ReadCompo';
 import { useUserStore } from './store/user';
+import { authApi } from './api';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = useUserStore((s) => s.token);
@@ -43,6 +45,15 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  const token = useUserStore((s) => s.token);
+  const logout = useUserStore((s) => s.logout);
+
+  useEffect(() => {
+    if (!token) return;
+    authApi.checkSession().then((valid) => {
+      if (!valid) logout();
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Router>
       <Routes>
