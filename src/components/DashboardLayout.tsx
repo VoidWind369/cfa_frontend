@@ -206,20 +206,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
           {!token && (
             <nav className="space-y-1">
-              <NavLink
-                to="/middle-track/BZLM"
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                    isActive
-                      ? 'bg-gradient-to-r from-brand-primary/15 to-brand-glow/10 text-brand-primary border border-brand-soft/50 shadow-soft'
-                      : 'text-brand-text hover:bg-brand-muted/70 hover:pl-4'
-                  }`
-                }
+              <a
+                href="https://www.cocbzlm.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-brand-text hover:bg-brand-muted/70 hover:pl-4 transition-all duration-200 group"
               >
                 <Search className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} />
                 <span className="flex-1">{t('nav.bzlm')}</span>
                 <ChevronRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-              </NavLink>
+              </a>
             </nav>
           )}
 
