@@ -11,6 +11,7 @@ import {
   ScrollText,
   Settings,
   LogOut,
+  LogIn,
   Globe,
   ChevronDown,
   Swords,
@@ -18,6 +19,7 @@ import {
   History,
   X,
   ChevronRight,
+  Search,
 } from 'lucide-react';
 
 const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
@@ -89,7 +91,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, isAdmin } = useUserStore();
+  const { user, logout, isAdmin, token } = useUserStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
@@ -161,7 +163,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </button>
           </div>
 
-          {user && (
+          {user ? (
             <div
               onClick={handleProfile}
               className="mb-6 p-4 rounded-2xl cursor-pointer group relative overflow-hidden border border-pink-200/50 bg-gradient-to-br from-pink-100/80 via-rose-50/70 to-pink-100/60 hover:from-pink-200/60 hover:to-rose-100/80 transition-all duration-300"
@@ -192,14 +194,20 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 )}
               </div>
             </div>
+          ) : (
+            <div className="mb-6 p-6 rounded-2xl border border-brand-border/60 bg-gradient-to-br from-brand-soft/20 to-transparent text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-primary/80 via-brand-glow/80 to-brand-accent/80 flex items-center justify-center shadow-glow shadow-brand-primary/20">
+                <CircleDot className="w-7 h-7 text-white" />
+              </div>
+              <p className="text-sm font-semibold text-brand-text mb-1.5">{t('app_name')}</p>
+              <p className="text-xs text-brand-textLight leading-relaxed">{t('nav.guest_hint')}</p>
+            </div>
           )}
 
-          <nav className="space-y-1">
-            {visibleNavItems.map((item) => (
+          {!token && (
+            <nav className="space-y-1">
               <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
+                to="/middle-track/BZLM"
                 className={({ isActive }) =>
                   `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                     isActive
@@ -208,23 +216,56 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                   }`
                 }
               >
-                <item.icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} />
-                <span className="flex-1">{item.label}</span>
+                <Search className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} />
+                <span className="flex-1">{t('nav.bzlm')}</span>
                 <ChevronRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </NavLink>
-            ))}
-          </nav>
+            </nav>
+          )}
+
+          {token && (
+            <nav className="space-y-1">
+              {visibleNavItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                      isActive
+                        ? 'bg-gradient-to-r from-brand-primary/15 to-brand-glow/10 text-brand-primary border border-brand-soft/50 shadow-soft'
+                        : 'text-brand-text hover:bg-brand-muted/70 hover:pl-4'
+                    }`
+                  }
+                >
+                  <item.icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} />
+                  <span className="flex-1">{item.label}</span>
+                  <ChevronRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </NavLink>
+              ))}
+            </nav>
+          )}
         </div>
 
         <div className="p-5 border-t border-brand-border/50 space-y-3">
           <LanguageSwitcher />
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-brand-text hover:bg-rose-50/60 hover:text-brand-error transition-all group"
-          >
-            <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" strokeWidth={1.8} />
-            <span>{t('nav.logout')}</span>
-          </button>
+          {token ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-brand-text hover:bg-rose-50/60 hover:text-brand-error transition-all group"
+            >
+              <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" strokeWidth={1.8} />
+              <span>{t('nav.logout')}</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-brand-primary hover:bg-brand-soft/40 transition-all group"
+            >
+              <LogIn className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={1.8} />
+              <span>{t('nav.login')}</span>
+            </button>
+          )}
         </div>
       </aside>
 

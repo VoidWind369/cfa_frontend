@@ -57,6 +57,12 @@
 ## 组件新增
 - `src/contexts/SidebarContext.tsx` — 侧边栏状态上下文，供各页面菜单按钮使用
 
+## 侧边栏登录状态
+- 已登录：显示用户头像卡片 + 根据角色过滤的导航菜单 + 登出按钮
+- 未登录：显示品牌卡片（app_name + guest_hint）+ BZLM 公共链接 + 登录按钮
+- 未登录时不显示任何受保护菜单项
+- 公共页面 `/middle-track/:tag` 和 `/read-compo` 为无保护路由
+
 ## 服务器标签（部落管理）
 - `clan.is_global` 表示"国际服"（Global server），反之表示"中国服"（China server）
 - 所有部落卡片都必须显示服务器标签，英文用 Global / China，中文用 国际服 / 中国服
