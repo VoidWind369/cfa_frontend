@@ -80,7 +80,7 @@ const TrackInsertPage = () => {
         <div className="flex gap-3 pt-2">
           <Button onClick={handleSubmit} loading={loading} className="flex-1 gap-2">
             <Plus className="w-4 h-4" />
-            {t('track.new_track')}
+            {t('common.add')}
           </Button>
           <Button variant="ghost" onClick={() => navigate('/track')}>
             {t('common.back')}

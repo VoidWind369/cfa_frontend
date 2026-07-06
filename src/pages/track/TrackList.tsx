@@ -178,7 +178,7 @@ const TrackPage = () => {
             <Link to="/track-insert">
               <Button className="gap-1.5">
                 <Plus className="w-4 h-4" strokeWidth={2} />
-                {t('track.new_track')}
+                  {t('common.add')}
               </Button>
             </Link>
           </div>

@@ -162,7 +162,7 @@ const ClanPage = () => {
               <Link to="/clan-add">
                 <Button className="gap-1.5">
                   <Plus className="w-4 h-4" strokeWidth={2} />
-                  {t('clan.add_clan')}
+                  {t('common.add')}
                 </Button>
               </Link>
             )}

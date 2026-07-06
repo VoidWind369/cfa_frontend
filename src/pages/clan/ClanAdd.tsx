@@ -95,7 +95,7 @@ const ClanAddPage = () => {
             className={isAuto ? 'shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/40 animate-pulse-subtle' : ''}
           >
             <Wand2 className="w-4 h-4" />
-            {isAuto ? t('clan.auto_add') : t('common.add')}
+            {t('common.add')}
           </Button>
         </div>
         {message && (

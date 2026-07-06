@@ -130,7 +130,7 @@ const RoundPage = () => {
             <Link to="/round-insert">
               <Button className="gap-1.5">
                 <Plus className="w-4 h-4" strokeWidth={2} />
-                {t('round.new_round')}
+                  {t('common.add')}
               </Button>
             </Link>
           </div>

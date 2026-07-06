@@ -174,7 +174,7 @@ const UserPage = () => {
             <Link to="/user-add">
               <Button className="gap-1.5">
                 <Plus className="w-4 h-4" strokeWidth={2} />
-                {t('user.add_user')}
+                  {t('common.add')}
               </Button>
             </Link>
           </div>
