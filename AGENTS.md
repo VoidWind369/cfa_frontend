@@ -5,6 +5,7 @@
 本项目为 **CFA（部落对战积分系统）** 管理后台前端，由原 Rust/Dioxus 项目 `orange_international_web` 迁移至 React + TypeScript + Vite 技术栈。
 
 旧项目路径：`/Users/mzx/RustroverProjects/orange_international_web`
+后端路径：`/Users/mzx/RustroverProjects/orange_international`
 
 ### 技术栈
 - **框架**: React 18 + TypeScript
@@ -20,7 +21,8 @@
 ### 后端接口
 后端 API 地址根据域名自动切换：
 - 本地开发：`http://localhost:20020/api`
-- 生产环境：`https://cfa.orgvoid.top/api` 或 `https://cfa.omcoc.club/api`
+- 测试环境：`https://ncfa.orgvoid.top/api`
+- 生产环境：`https://cfa.orgvoid.top/api`
 
 ### 认证机制
 项目使用双轨认证机制：
@@ -136,6 +138,7 @@ src/
 - 管理员可新增（支持 Auto 自动获取名称）、编辑状态、删除部落
 - 首页"我的部落"点击部落名跳转到部落对战记录页
 - `clan.is_global` = 国际服(Global)，`false` = 中国服(China)；所有卡片显示服务器标签
+- **Clan Counts API**: 后端提供 `GET /orange/clan_counts` 接口返回各状态统计数量，前端通过 `clanApi.searchStats()` 调用，返回 `{ ready: number, locked: number, other: number, blacklist: number, ally: number }` 格式
 
 ### 部落对战记录 (ClanTrack)
 - 路径 `/clan-track/:id`，首页部落卡片点击进入
