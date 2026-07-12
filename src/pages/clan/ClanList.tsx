@@ -30,6 +30,13 @@ const ClanPage = () => {
   const { setSidebarOpen } = useSidebar();
   const [search, setSearch] = useState('');
   const [clans, setClans] = useState<ClanInfo[]>([]);
+  const [counts, setCounts] = useState<{ ready: number; locked: number; other: number; blacklist: number; ally: number }>({
+    ready: 0,
+    locked: 0,
+    other: 0,
+    blacklist: 0,
+    ally: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
@@ -73,12 +80,31 @@ const ClanPage = () => {
           setClans(Array.isArray(data) ? data : []);
           setTotal(Array.isArray(data) ? data.length : 0);
         } else {
-          const res = await clanApi.listPage(1, PAGE_SIZE);
-          setClans(res.data || []);
-          setTotal(res.data_count || 0);
+          const listRes = await clanApi.listPage(1, PAGE_SIZE);
+          setClans(listRes.data || []);
+          setTotal(listRes.data_count || 0);
           setPage(1);
+
+          try {
+            const countsRes = await clanApi.counts();
+            const countsData = countsRes.data || [];
+            const countsMap = countsData.reduce((acc, item) => {
+              switch (item.status) {
+                case 1: acc.ready = item.count; break;
+                case 2: acc.locked = item.count; break;
+                case 3: acc.other = item.count; break;
+                case 4: acc.blacklist = item.count; break;
+                case 9: acc.ally = item.count; break;
+              }
+              return acc;
+            }, { ready: 0, locked: 0, other: 0, blacklist: 0, ally: 0 });
+            setCounts(countsMap);
+          } catch (e) {
+            console.error('counts fetch error:', e);
+          }
         }
       } catch (e) {
+        console.error('ClanList fetch error:', e);
         setClans([]);
         setTotal(0);
       } finally {
@@ -113,14 +139,6 @@ const ClanPage = () => {
       loadMore(page);
     }
   }, [page, search, hasMore, loadMore]);
-
-  const counts = {
-    ready: clans.filter((c) => c.status === 1).length,
-    locked: clans.filter((c) => c.status === 2).length,
-    other: clans.filter((c) => c.status === 3).length,
-    blacklist: clans.filter((c) => c.status === 4).length,
-    ally: clans.filter((c) => c.status === 9).length,
-  };
 
   const getStatusBadge = (status: number) => {
     switch (status) {

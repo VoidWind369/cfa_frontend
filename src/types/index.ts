@@ -48,6 +48,11 @@ export enum ClanStatus {
   Ally = 9,
 }
 
+export interface ClanCounts {
+  status: ClanStatus;
+  count: number;
+}
+
 export interface TrackInfo {
   id: string;
   self_clan_id: string;
@@ -122,11 +127,11 @@ export interface OperateLogInfo {
 }
 
 export enum RewardType {
-  HitExternal = 'HitExternal',
-  FaceBlack = 'FaceBlack',
-  Penalty = 'Penalty',
-  Penalty2 = 'Penalty2',
-  Penalty3 = 'Penalty3',
+  HitExternal = 1,
+  FaceBlack = 2,
+  Penalty = 31,
+  Penalty2 = 32,
+  Penalty3 = 33,
 }
 
 export interface LoginLogInfo {

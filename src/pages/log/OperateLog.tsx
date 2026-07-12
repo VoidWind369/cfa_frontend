@@ -102,14 +102,14 @@ const OperateLogPage = () => {
     }
   }, [page, hasMore, loadMore]);
 
-  const getRewardTypeText = (type: string) => {
+  const getRewardTypeText = (type: number) => {
     switch (type) {
-      case 'HitExternal': return t('log.hit_external');
-      case 'FaceBlack': return t('log.face_black');
-      case 'Penalty': return t('log.penalty_1');
-      case 'Penalty2': return t('log.penalty_2');
-      case 'Penalty3': return t('log.penalty_3');
-      default: return type;
+      case 1: return t('log.hit_external');
+      case 2: return t('log.face_black');
+      case 31: return t('log.penalty_1');
+      case 32: return t('log.penalty_2');
+      case 33: return t('log.penalty_3');
+      default: return String(type);
     }
   };
 
@@ -173,7 +173,7 @@ const OperateLogPage = () => {
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 ml-12">
                       <div className="flex flex-wrap gap-2">
-                        <Badge type="default">{getRewardTypeText(log.reward_type as string)}</Badge>
+                        <Badge type="default">{getRewardTypeText(log.reward_type)}</Badge>
                         <Badge>{log.round_code}</Badge>
                         <Badge type="warning">{log.text}</Badge>
                       </div>

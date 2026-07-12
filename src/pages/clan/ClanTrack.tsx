@@ -14,10 +14,10 @@ import {
   AlertTriangle,
   Minus,
   Flag,
-  User,
-  Users,
   History,
   Menu,
+  Skull,
+  Handshake,
 } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
@@ -48,23 +48,12 @@ const ClanTrackPage = () => {
     fetchData();
   }, [id]);
 
-  const getWinLose = (track: TrackInfo) => {
-    if (!clan) return 'none';
-    const isSelf = track.self_clan_id === clan.id;
-    const isRival = track.rival_clan_id === clan.id;
-    if (isSelf && track.result === 1) return 'win';
-    if (isRival && track.result === -1) return 'win';
-    if (isSelf && track.result === -1) return 'lose';
-    if (isRival && track.result === 1) return 'lose';
-    return 'none';
-  };
-
   const counts = {
-    win: tracks.filter((t) => getWinLose(t) === 'win').length,
-    lose: tracks.filter((t) => getWinLose(t) === 'lose').length,
-    award: tracks.filter((t) => t.type === 11 && getWinLose(t) === 'win').length,
-    penalty: tracks.filter((t) => t.type === 12 && getWinLose(t) === 'lose').length,
-    other: tracks.filter((t) => t.type === 0 || t.type === 2 || (t.type === 11 && getWinLose(t) !== 'win') || (t.type === 12 && getWinLose(t) !== 'lose')).length,
+    win: tracks.filter((t) => t.result === 1).length,
+    lose: tracks.filter((t) => t.result === -1).length,
+    award: tracks.filter((t) => t.type === 11 && t.result === 1).length,
+    penalty: tracks.filter((t) => t.type === 12 && t.result === -1).length,
+    other: tracks.filter((t) => t.type === 0 || t.type === 2 || (t.type === 11 && t.result !== 1) || (t.type === 12 && t.result !== -1)).length,
   };
 
   const getTypeBadge = (type: number) => {
@@ -75,6 +64,14 @@ const ClanTrackPage = () => {
       case 11: return <Badge type="warning">{t('track.award')}</Badge>;
       case 12: return <Badge type="error">{t('track.penalty')}</Badge>;
       default: return <Badge>{type}</Badge>;
+    }
+  };
+
+  const getResultIcon = (result: number) => {
+    switch (result) {
+      case 1: return <Trophy className="w-5 h-5" />;
+      case -1: return <Skull className="w-5 h-5" />;
+      default: return <Handshake className="w-5 h-5" />;
     }
   };
 
@@ -153,33 +150,33 @@ const ClanTrackPage = () => {
       ) : (
         <div className="space-y-3">
           {tracks.map((track) => {
-            const result = getWinLose(track);
-            const isUsSelf = track.self_clan_id === clan?.id;
+            const self = {
+              name: track.self_name || track.self_clan_id,
+              tag: track.self_tag,
+              historyPoint: track.self_history_point,
+              nowPoint: track.self_now_point,
+              rewardHistory: track.reward_info?.self_history,
+              rewardNow: track.reward_info?.self_now,
+            };
+            const rival = {
+              name: track.rival_name || track.rival_clan_id,
+              tag: track.rival_tag,
+              historyPoint: track.rival_history_point,
+              nowPoint: track.rival_now_point,
+              rewardHistory: track.reward_info?.rival_history,
+              rewardNow: track.reward_info?.rival_now,
+            };
 
-            const us = {
-              name: isUsSelf ? (track.self_name || track.self_clan_id) : (track.rival_name || track.rival_clan_id),
-              tag: isUsSelf ? track.self_tag : track.rival_tag,
-              historyPoint: isUsSelf ? track.self_history_point : track.rival_history_point,
-              nowPoint: isUsSelf ? track.self_now_point : track.rival_now_point,
-              rewardHistory: isUsSelf ? track.reward_info?.self_history : track.reward_info?.rival_history,
-              rewardNow: isUsSelf ? track.reward_info?.self_now : track.reward_info?.rival_now,
-            };
-            const them = {
-              name: isUsSelf ? (track.rival_name || track.rival_clan_id) : (track.self_name || track.self_clan_id),
-              tag: isUsSelf ? track.rival_tag : track.self_tag,
-              historyPoint: isUsSelf ? track.rival_history_point : track.self_history_point,
-              nowPoint: isUsSelf ? track.rival_now_point : track.self_now_point,
-              rewardHistory: isUsSelf ? track.reward_info?.rival_history : track.reward_info?.self_history,
-              rewardNow: isUsSelf ? track.reward_info?.rival_now : track.reward_info?.self_now,
-            };
-            const usDiff = us.nowPoint - us.historyPoint;
-            const themDiff = them.nowPoint - them.historyPoint;
+            const selfColor = track.result === 1 ? 'green' : track.result === -1 ? 'red' : 'gray';
+            const rivalColor = track.result === 1 ? 'red' : track.result === -1 ? 'green' : 'gray';
+
+            const selfDiff = self.nowPoint - self.historyPoint;
+            const rivalDiff = rival.nowPoint - rival.historyPoint;
 
             return (
               <Card key={track.id} className="p-4 sm:p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    {result === 'win' ? <Badge type="success">{t('track.win')}</Badge> : result === 'lose' ? <Badge type="error">{t('track.lose')}</Badge> : <Badge className="bg-gray-50/80 text-gray-400 border-gray-200/60">{t('track.none')}</Badge>}
                     {getTypeBadge(track.type)}
                   </div>
                   <span className="text-xs text-brand-textLight">
@@ -189,37 +186,37 @@ const ClanTrackPage = () => {
                 
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${result === 'win' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                      <User className="w-5 h-5" />
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${selfColor === 'green' ? 'bg-green-100 text-green-600' : selfColor === 'red' ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-500'}`}>
+                      {getResultIcon(track.result)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium truncate ${result === 'win' ? 'text-green-600' : result === 'lose' ? 'text-red-500' : 'text-brand-text'}`}>
-                        {us.name}
+                      <p className={`font-medium truncate ${selfColor === 'green' ? 'text-green-600' : selfColor === 'red' ? 'text-red-500' : 'text-brand-text'}`}>
+                        {self.name}
                       </p>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
-                        {us.tag && (
-                          <span className="text-xs text-brand-textLight/60 font-mono">{us.tag}</span>
+                        {self.tag && (
+                          <span className="text-xs text-brand-textLight/60 font-mono">{self.tag}</span>
                         )}
                         <div className="flex items-center gap-1 text-xs text-brand-textLight">
                           <History className="w-3 h-3 shrink-0" />
-                          <span>{us.historyPoint}</span>
+                          <span>{self.historyPoint}</span>
                           <ArrowRight className="w-3 h-3" />
-                          <span className="font-medium">{us.nowPoint}</span>
-                          {usDiff !== 0 && (
-                            <span className={`font-bold ${usDiff > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              ({usDiff > 0 ? '+' : ''}{usDiff})
+                          <span className="font-medium">{self.nowPoint}</span>
+                          {selfDiff !== 0 && (
+                            <span className={`font-bold ${selfDiff > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                              ({selfDiff > 0 ? '+' : ''}{selfDiff})
                             </span>
                           )}
                         </div>
                       </div>
                       {track.reward_info && (
                         <div className="flex items-center gap-1 text-xs text-amber-600 mt-0.5">
-                          <span>{t('track.reward_history')}: {us.rewardHistory}</span>
+                          <span>{t('track.reward_history')}: {self.rewardHistory}</span>
                           <ArrowRight className="w-3 h-3" />
-                          <span className="font-medium">{us.rewardNow}</span>
-                          {us.rewardHistory !== us.rewardNow && (
-                            <span className={`ml-0.5 font-bold ${(us.rewardNow!) > (us.rewardHistory!) ? 'text-green-500' : 'text-red-500'}`}>
-                              ({(us.rewardNow!) > (us.rewardHistory!) ? '+' : ''}{(us.rewardNow!) - (us.rewardHistory!)})
+                          <span className="font-medium">{self.rewardNow}</span>
+                          {self.rewardHistory !== self.rewardNow && (
+                            <span className={`ml-0.5 font-bold ${(self.rewardNow!) > (self.rewardHistory!) ? 'text-green-500' : 'text-red-500'}`}>
+                              ({(self.rewardNow!) > (self.rewardHistory!) ? '+' : ''}{(self.rewardNow!) - (self.rewardHistory!)})
                             </span>
                           )}
                         </div>
@@ -238,37 +235,37 @@ const ClanTrackPage = () => {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${result === 'lose' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                      <Users className="w-5 h-5" />
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${rivalColor === 'green' ? 'bg-green-100 text-green-600' : rivalColor === 'red' ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-500'}`}>
+                      {getResultIcon(-track.result)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium truncate ${result === 'lose' ? 'text-green-600' : result === 'win' ? 'text-red-500' : 'text-brand-text'}`}>
-                        {them.name}
+                      <p className={`font-medium truncate ${rivalColor === 'green' ? 'text-green-600' : rivalColor === 'red' ? 'text-red-500' : 'text-brand-text'}`}>
+                        {rival.name}
                       </p>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
-                        {them.tag && (
-                          <span className="text-xs text-brand-textLight/60 font-mono">{them.tag}</span>
+                        {rival.tag && (
+                          <span className="text-xs text-brand-textLight/60 font-mono">{rival.tag}</span>
                         )}
                         <div className="flex items-center gap-1 text-xs text-brand-textLight">
                           <History className="w-3 h-3 shrink-0" />
-                          <span>{them.historyPoint}</span>
+                          <span>{rival.historyPoint}</span>
                           <ArrowRight className="w-3 h-3" />
-                          <span className="font-medium">{them.nowPoint}</span>
-                          {themDiff !== 0 && (
-                            <span className={`font-bold ${themDiff > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              ({themDiff > 0 ? '+' : ''}{themDiff})
+                          <span className="font-medium">{rival.nowPoint}</span>
+                          {rivalDiff !== 0 && (
+                            <span className={`font-bold ${rivalDiff > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                              ({rivalDiff > 0 ? '+' : ''}{rivalDiff})
                             </span>
                           )}
                         </div>
                       </div>
                       {track.reward_info && (
                         <div className="flex items-center gap-1 text-xs text-amber-600 mt-0.5">
-                          <span>{t('track.reward_history')}: {them.rewardHistory}</span>
+                          <span>{t('track.reward_history')}: {rival.rewardHistory}</span>
                           <ArrowRight className="w-3 h-3" />
-                          <span className="font-medium">{them.rewardNow}</span>
-                          {them.rewardHistory !== them.rewardNow && (
-                            <span className={`ml-0.5 font-bold ${(them.rewardNow!) > (them.rewardHistory!) ? 'text-green-500' : 'text-red-500'}`}>
-                              ({(them.rewardNow!) > (them.rewardHistory!) ? '+' : ''}{(them.rewardNow!) - (them.rewardHistory!)})
+                          <span className="font-medium">{rival.rewardNow}</span>
+                          {rival.rewardHistory !== rival.rewardNow && (
+                            <span className={`ml-0.5 font-bold ${(rival.rewardNow!) > (rival.rewardHistory!) ? 'text-green-500' : 'text-red-500'}`}>
+                              ({(rival.rewardNow!) > (rival.rewardHistory!) ? '+' : ''}{(rival.rewardNow!) - (rival.rewardHistory!)})
                             </span>
                           )}
                         </div>

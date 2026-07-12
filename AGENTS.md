@@ -138,13 +138,14 @@ src/
 - 管理员可新增（支持 Auto 自动获取名称）、编辑状态、删除部落
 - 首页"我的部落"点击部落名跳转到部落对战记录页
 - `clan.is_global` = 国际服(Global)，`false` = 中国服(China)；所有卡片显示服务器标签
-- **Clan Counts API**: 后端提供 `GET /orange/clan_counts` 接口返回各状态统计数量，前端通过 `clanApi.searchStats()` 调用，返回 `{ ready: number, locked: number, other: number, blacklist: number, ally: number }` 格式
+- **Clan Counts API**: 后端提供 `GET /orange/clan_search` 接口返回各状态统计数量，前端通过 `clanApi.counts()` 调用，返回 `RestApi<ClanCounts[]>` 格式，其中 `ClanCounts` 包含 `{ status: number, count: number }`，status 对应正常(1)/锁定(2)/其他(3)/黑名单(4)/友盟(9)
 
 ### 部落对战记录 (ClanTrack)
 - 路径 `/clan-track/:id`，首页部落卡片点击进入
 - 展示所有对战记录，自动判定胜负视角（`getWinLose` 以当前帮派为准）
 - 顶部队列：胜 / 负 / 奖励 / 惩罚 / 其他
 - 展示双方部落、tag、历史→当前积分(+diff)、奖励变动；当前帮派为主视角排第一行
+- **图标优化**：赢=Trophy（奖杯）、输=Skull（骷髅）、平=Handshake（握手），双方根据胜负结果动态显示
 
 ### 用户管理 (User)
 - 仅管理员可见；支持按姓名或邮箱搜索
@@ -229,6 +230,10 @@ src/
 - `hasMore` 判断：`data.length === PAGE_SIZE` 时有更多
 - 数据去重：基于唯一 id 过滤（无 id 时用组合键如 `user_id_login_time`）
 - 涉及页面：ClanList / TrackList / RoundList / OperateLog / LoginLog / UserList
+
+### 请求缓存控制
+- 系统禁用 HTTP 缓存，所有请求添加 `Cache-Control: no-cache`、`Pragma: no-cache`、`Expires: 0` 头
+- 确保每次请求都获取最新数据，避免缓存导致的数据不一致
 
 ### Sticky Header
 - 所有页面（除 Dashboard/Login 外）顶部 `sticky top-0 backdrop-blur-md`

@@ -20,7 +20,7 @@ const ClanEditPage = () => {
   const [message, setMessage] = useState('');
   const [rounds, setRounds] = useState<RoundInfo[]>([]);
   const [selectedRound, setSelectedRound] = useState('');
-  const [rewardType, setRewardType] = useState('');
+  const [rewardType, setRewardType] = useState<number>(0);
   const [rewardMessage, setRewardMessage] = useState('');
   const [rewardSaving, setRewardSaving] = useState(false);
   const [previewRewardPoint, setPreviewRewardPoint] = useState<number | null>(null);
@@ -95,7 +95,7 @@ const ClanEditPage = () => {
     }
   };
 
-  const handleRewardAction = (type: string, pointChange: number) => {
+  const handleRewardAction = (type: number, pointChange: number) => {
     if (!clanPoint) return;
     setRewardType(type);
     setPreviewRewardPoint(clanPoint.reward_point + pointChange);
@@ -103,7 +103,7 @@ const ClanEditPage = () => {
   };
 
   const handleRewardSubmit = async () => {
-    if (!clan || !rewardType || !selectedRound) return;
+    if (!clan || rewardType === 0 || !selectedRound) return;
     setRewardSaving(true);
     try {
       const res = await clanApi.updateRewardPoint({
@@ -116,7 +116,7 @@ const ClanEditPage = () => {
         setClanPoint((prev) => prev ? { ...prev, reward_point: newRewardPoint } : null);
         setClan((prev) => prev ? { ...prev, reward_point: newRewardPoint } : null);
         setPreviewRewardPoint(null);
-        setRewardType('');
+        setRewardType(0);
         setRewardMessage(t('common.success'));
         setTimeout(() => setRewardMessage(''), 3000);
       } else {
@@ -232,14 +232,14 @@ const ClanEditPage = () => {
         )}
       </Card>
 
-      {isAdmin && (
+      {isAdmin && clan.status === 1 && (
         <Card className="p-6 space-y-5 mb-6">
           <h2 className="text-lg font-bold text-brand-text flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
             {t('clan.reward_manage')}
           </h2>
 
-          {clanPoint && (
+          {clanPoint && rewardType !== 0 && (
             <div className="flex items-center justify-between p-4 rounded-xl bg-brand-surface/50 border border-brand-border">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
@@ -285,20 +285,20 @@ const ClanEditPage = () => {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <button
-              onClick={() => handleRewardAction('HitExternal', 1)}
+              onClick={() => handleRewardAction(1, 1)}
               className={`p-4 rounded-2xl border-2 transition-all ${
-                rewardType === 'HitExternal'
+                rewardType === 1
                   ? 'border-green-400 bg-green-50 shadow-lg shadow-green-200/50'
                   : 'border-brand-border bg-brand-surface hover:border-green-300 hover:bg-green-50/50'
               }`}
             >
               <div className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  rewardType === 'HitExternal' ? 'bg-green-500' : 'bg-green-100'
+                  rewardType === 1 ? 'bg-green-500' : 'bg-green-100'
                 }`}>
-                  <Trophy className={`w-5 h-5 ${rewardType === 'HitExternal' ? 'text-white' : 'text-green-600'}`} />
+                  <Trophy className={`w-5 h-5 ${rewardType === 1 ? 'text-white' : 'text-green-600'}`} />
                 </div>
                 <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.hit_external')}</span>
                 <span className="text-xs font-bold text-green-500 flex items-center whitespace-nowrap">
@@ -308,18 +308,18 @@ const ClanEditPage = () => {
             </button>
 
             <button
-              onClick={() => handleRewardAction('FaceBlack', 1)}
+              onClick={() => handleRewardAction(2, 1)}
               className={`p-4 rounded-2xl border-2 transition-all ${
-                rewardType === 'FaceBlack'
+                rewardType === 2
                   ? 'border-amber-400 bg-amber-50 shadow-lg shadow-amber-200/50'
                   : 'border-brand-border bg-brand-surface hover:border-amber-300 hover:bg-amber-50/50'
               }`}
             >
               <div className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  rewardType === 'FaceBlack' ? 'bg-amber-500' : 'bg-amber-100'
+                  rewardType === 2 ? 'bg-amber-500' : 'bg-amber-100'
                 }`}>
-                  <AlertTriangle className={`w-5 h-5 ${rewardType === 'FaceBlack' ? 'text-white' : 'text-amber-600'}`} />
+                  <AlertTriangle className={`w-5 h-5 ${rewardType === 2 ? 'text-white' : 'text-amber-600'}`} />
                 </div>
                 <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.face_black')}</span>
                 <span className="text-xs font-bold text-green-500 flex items-center whitespace-nowrap">
@@ -329,35 +329,79 @@ const ClanEditPage = () => {
             </button>
 
             <button
-              onClick={() => handleRewardAction('Penalty', -1)}
+              onClick={() => handleRewardAction(31, -1)}
               className={`p-4 rounded-2xl border-2 transition-all ${
-                rewardType === 'Penalty'
+                rewardType === 31
                   ? 'border-red-400 bg-red-50 shadow-lg shadow-red-200/50'
                   : 'border-brand-border bg-brand-surface hover:border-red-300 hover:bg-red-50/50'
               }`}
             >
               <div className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  rewardType === 'Penalty' ? 'bg-red-500' : 'bg-red-100'
+                  rewardType === 31 ? 'bg-red-500' : 'bg-red-100'
                 }`}>
-                  <Skull className={`w-5 h-5 ${rewardType === 'Penalty' ? 'text-white' : 'text-red-600'}`} />
+                  <Skull className={`w-5 h-5 ${rewardType === 31 ? 'text-white' : 'text-red-600'}`} />
                 </div>
-                <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.penalty')}</span>
+                <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.penalty')}1</span>
                 <span className="text-xs font-bold text-red-500 flex items-center whitespace-nowrap">
                   <Minus className="w-3 h-3" />1
                 </span>
               </div>
             </button>
+
+            <button
+              onClick={() => handleRewardAction(32, -2)}
+              className={`p-4 rounded-2xl border-2 transition-all ${
+                rewardType === 32
+                  ? 'border-red-400 bg-red-50 shadow-lg shadow-red-200/50'
+                  : 'border-brand-border bg-brand-surface hover:border-red-300 hover:bg-red-50/50'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-2">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  rewardType === 32 ? 'bg-red-500' : 'bg-red-100'
+                }`}>
+                  <Skull className={`w-5 h-5 ${rewardType === 32 ? 'text-white' : 'text-red-600'}`} />
+                </div>
+                <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.penalty')}2</span>
+                <span className="text-xs font-bold text-red-500 flex items-center whitespace-nowrap">
+                  <Minus className="w-3 h-3" />2
+                </span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleRewardAction(33, -3)}
+              className={`p-4 rounded-2xl border-2 transition-all ${
+                rewardType === 33
+                  ? 'border-red-400 bg-red-50 shadow-lg shadow-red-200/50'
+                  : 'border-brand-border bg-brand-surface hover:border-red-300 hover:bg-red-50/50'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-2">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  rewardType === 33 ? 'bg-red-500' : 'bg-red-100'
+                }`}>
+                  <Skull className={`w-5 h-5 ${rewardType === 33 ? 'text-white' : 'text-red-600'}`} />
+                </div>
+                <span className="text-xs font-medium text-brand-text whitespace-nowrap">{t('clan.penalty')}3</span>
+                <span className="text-xs font-bold text-red-500 flex items-center whitespace-nowrap">
+                  <Minus className="w-3 h-3" />3
+                </span>
+              </div>
+            </button>
           </div>
 
-          {rewardType && (
+          {rewardType !== 0 && (
             <div className="pt-3 border-t border-brand-border/50">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-brand-textLight">
                   {t('clan.confirm_reward')}: <span className="font-medium text-brand-text">
-                    {rewardType === 'HitExternal' && t('clan.hit_external')}
-                    {rewardType === 'FaceBlack' && t('clan.face_black')}
-                    {rewardType === 'Penalty' && t('clan.penalty')}
+                    {rewardType === 1 && t('clan.hit_external')}
+                    {rewardType === 2 && t('clan.face_black')}
+                    {rewardType === 31 && t('log.penalty_1')}
+                    {rewardType === 32 && t('log.penalty_2')}
+                    {rewardType === 33 && t('log.penalty_3')}
                   </span>
                 </span>
                 <Button

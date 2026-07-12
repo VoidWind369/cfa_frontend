@@ -23,6 +23,11 @@ export const PUBLIC_TOKEN = {
 export const api = axios.create({
   baseURL: getBaseUrl(),
   timeout: 300000,
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+  },
 });
 
 // 普通请求拦截器：附加用户 token（仅当未手动设置 Authorization 时）
@@ -114,11 +119,12 @@ export const head = async (url: string): Promise<boolean> => {
 
 // ============ 公开接口方法（使用 public token）============
 
-export const getPublic = async <T>(url: string, publicToken: string): Promise<T> => {
+export const getPublic = async <T>(url: string, publicToken: string, params?: Record<string, any>): Promise<T> => {
   const res = await api.get<T>(url, {
     headers: {
       Authorization: `Bearer ${publicToken}`,
     },
+    params,
   });
   return res.data;
 };

@@ -61,8 +61,7 @@ const DashboardPage = () => {
   const getResultBadge = (result?: number) => {
     if (result === undefined) return null;
     if (result === 1) return <Badge type="success">{t('track.win')}</Badge>;
-    if (result === -1) return <Badge type="error">{t('track.lose')}</Badge>;
-    return <Badge className="bg-gray-50/80 text-gray-400 border-gray-200/60">{t('track.none')}</Badge>;
+    return <Badge type="error">{t('track.lose')}</Badge>;
   };
 
   const handleRegister = async (clan: ClanInfo, isLast: boolean) => {

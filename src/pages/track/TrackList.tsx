@@ -11,7 +11,6 @@ import {
   Plus,
   Trophy,
   X,
-  Minus,
   Clock,
   User,
   Users,
@@ -122,18 +121,11 @@ const TrackPage = () => {
             {t('track.win')}
           </Badge>
         );
-      case -1:
+      default:
         return (
           <Badge type="error">
             <X className="w-3 h-3 mr-1" strokeWidth={2} />
             {t('track.lose')}
-          </Badge>
-        );
-      default:
-        return (
-          <Badge className="bg-gray-50/80 text-gray-400 border-gray-200/60">
-            <Minus className="w-3 h-3 mr-1" strokeWidth={2} />
-            {t('track.none')}
           </Badge>
         );
     }

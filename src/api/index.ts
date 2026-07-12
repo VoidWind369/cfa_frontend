@@ -3,6 +3,7 @@ import type {
   UserSession,
   RestApi,
   ClanInfo,
+  ClanCounts,
   ClanPointInfo,
   UserInfo,
   TrackInfo,
@@ -36,6 +37,9 @@ export const clanApi = {
   search: (keyword: string) =>
     postPublicRaw<ClanInfo[]>('orange/clan_search', keyword, PUBLIC_TOKEN.clan),
 
+  counts: () =>
+    getPublic<RestApi<ClanCounts[]>>('orange/clan_search', PUBLIC_TOKEN.clan),
+
   detail: (id: string) =>
     get<ClanInfo>(`orange/clan/${id}`),
 
@@ -50,7 +54,7 @@ export const clanApi = {
   delete: (id: string) =>
     del<number>(`orange/clan/${id}`),
 
-  updateRewardPoint: (data: { round_id: string; clan_id: string; reward_type: string }) =>
+  updateRewardPoint: (data: { round_id: string; clan_id: string; reward_type: number }) =>
     put<RestApi<number>>('orange/clan_point', data),
 
   pointDetail: (id: string) =>
@@ -105,9 +109,6 @@ export const trackApi = {
 
   listPage: (page: number, pageSize: number) =>
     get<RestApi<TrackInfo[]>>(`orange/track_${page}/${pageSize}`),
-
-  detail: (id: string) =>
-    get<TrackInfo>(`orange/track/${id}`),
 
   clanTrack: (clanId: string) =>
     get<TrackInfo[]>(`orange/track/${clanId}`),
