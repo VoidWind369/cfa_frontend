@@ -16,6 +16,9 @@ import {
   Target,
   Sparkles,
   Menu,
+  Trophy,
+  Skull,
+  Handshake,
 } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
@@ -58,10 +61,12 @@ const DashboardPage = () => {
     }
   };
 
-  const getResultBadge = (result?: number) => {
-    if (result === undefined) return null;
-    if (result === 1) return <Badge type="success">{t('track.win')}</Badge>;
-    return <Badge type="error">{t('track.lose')}</Badge>;
+  const getResultIcon = (result: number) => {
+    switch (result) {
+      case 1: return <Trophy className="w-4 h-4" />;
+      case -1: return <Skull className="w-4 h-4" />;
+      default: return <Handshake className="w-4 h-4" />;
+    }
   };
 
   const handleRegister = async (clan: ClanInfo, isLast: boolean) => {
@@ -124,36 +129,14 @@ const DashboardPage = () => {
       </div>
 
       {regResult && (
-        <div className={`mb-8 p-5 border-l-4 rounded-r-2xl ${regResult.success ? 'border-l-brand-success bg-green-50/50' : 'border-l-brand-error bg-red-50/50'} animate-slide-down backdrop-blur-sm`}>
-          <div className="flex items-start gap-3">
-            <CheckCircle2 className={`w-5 h-5 mt-0.5 ${regResult.success ? 'text-brand-success' : 'text-brand-error'}`} />
-            <div className="flex-1">
-              <p className={`text-sm font-medium ${regResult.success ? 'text-green-700' : 'text-red-700'}`}>
+        <div className={`mb-8 p-4 border-l-4 rounded-r-2xl overflow-hidden ${regResult.success ? 'border-l-brand-success bg-green-50/50' : 'border-l-brand-error bg-red-50/50'} animate-slide-down backdrop-blur-sm`}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className={`w-5 h-5 shrink-0 ${regResult.success ? 'text-brand-success' : 'text-brand-error'}`} />
+              <span className={`text-xs font-medium ${regResult.success ? 'text-green-700' : 'text-red-700'}`}>
                 {regResult.message}
-              </p>
-              {regResult.data && (
-                <div className="mt-2 space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {getTypeBadge(regResult.data.type)}
-                    {getResultBadge(regResult.data.result)}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-brand-textLight">
-                    <span className="font-medium">{t('track.self')}:</span>
-                    <span>{regResult.data.self_name || regResult.data.self_tag || t('common.unknown')}</span>
-                    <span className="text-brand-primary font-bold">VS</span>
-                    <span>{regResult.data.rival_name || regResult.data.rival_tag || t('common.unknown')}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-brand-textLight">
-                    <span>{t('track.history_point')}: {regResult.data.self_history_point} → {regResult.data.self_now_point}</span>
-                    <span>{t('track.rival_point')}: {regResult.data.rival_history_point} → {regResult.data.rival_now_point}</span>
-                  </div>
-                  {regResult.data.round_code && (
-                    <div className="flex items-center gap-2 text-xs text-brand-textLight">
-                      <span>{t('track.round_code')}: {regResult.data.round_code}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              </span>
+              {getTypeBadge(regResult.data?.type)}
             </div>
             <button
               onClick={() => setRegResult(null)}
@@ -162,6 +145,46 @@ const DashboardPage = () => {
               ×
             </button>
           </div>
+          {regResult.data && (
+            <div className="space-y-4">
+              <div className={`flex items-start gap-2`}>
+                <div className={`w-6 h-6 flex items-center justify-center shrink-0 ${regResult.data.result === 1 ? 'text-green-500' : regResult.data.result === -1 ? 'text-red-400' : 'text-gray-400'}`}>
+                  {getResultIcon(regResult.data.result)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-medium break-words ${regResult.data.result === 1 ? 'text-green-700' : regResult.data.result === -1 ? 'text-red-600' : 'text-brand-text'}`}>
+                    {regResult.data.self_name || regResult.data.self_tag || t('common.unknown')}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1 text-xs text-brand-textLight">
+                    <span>{regResult.data.self_history_point}</span>
+                    <span>→</span>
+                    <span className="font-medium">{regResult.data.self_now_point}</span>
+                  </div>
+                </div>
+              </div>
+              <div className={`flex items-start gap-2`}>
+                <div className={`w-6 h-6 flex items-center justify-center shrink-0 ${regResult.data.result === -1 ? 'text-green-500' : regResult.data.result === 1 ? 'text-red-400' : 'text-gray-400'}`}>
+                  {getResultIcon(-regResult.data.result)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-medium break-words ${regResult.data.result === -1 ? 'text-green-700' : regResult.data.result === 1 ? 'text-red-600' : 'text-brand-text'}`}>
+                    {regResult.data.rival_name || regResult.data.rival_tag || t('common.unknown')}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1 text-xs text-brand-textLight">
+                    <span>{regResult.data.rival_history_point}</span>
+                    <span>→</span>
+                    <span className="font-medium">{regResult.data.rival_now_point}</span>
+                  </div>
+                </div>
+              </div>
+              {regResult.data.round_code && (
+                <div className="flex flex-wrap items-center gap-1 text-xs text-brand-textLight mt-4">
+                  <span>{t('track.round_code')}:</span>
+                  <span className="break-all">{regResult.data.round_code}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
