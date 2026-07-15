@@ -12,7 +12,6 @@ import {
   Trophy,
   Award,
   AlertTriangle,
-  Minus,
   Flag,
   History,
   Menu,
@@ -51,9 +50,9 @@ const ClanTrackPage = () => {
   const counts = {
     win: tracks.filter((t) => t.result === 1).length,
     lose: tracks.filter((t) => t.result === -1).length,
-    award: tracks.filter((t) => t.type === 11 && t.result === 1).length,
-    penalty: tracks.filter((t) => t.type === 12 && t.result === -1).length,
-    other: tracks.filter((t) => t.type === 0 || t.type === 2 || (t.type === 11 && t.result !== 1) || (t.type === 12 && t.result !== -1)).length,
+    award: tracks.filter((t) => t.type === 11).length,
+    penalty: tracks.filter((t) => t.type === 12).length,
+    other: tracks.filter((t) => t.type !== 11 && t.type !== 12 && t.result !== 1 && t.result !== -1).length,
   };
 
   const getTypeBadge = (type: number) => {
@@ -113,7 +112,7 @@ const ClanTrackPage = () => {
               <p className="text-xs text-green-500">{t('track.win')}</p>
             </div>
             <div className="text-center p-3 rounded-xl bg-red-50 border border-red-100">
-              <Minus className="w-5 h-5 mx-auto mb-1.5 text-red-400" />
+              <Skull className="w-5 h-5 mx-auto mb-1.5 text-red-400" />
               <p className="text-xl font-bold text-red-500">{counts.lose}</p>
               <p className="text-xs text-red-400">{t('track.lose')}</p>
             </div>
