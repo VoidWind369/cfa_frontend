@@ -47,8 +47,6 @@ const ClanTrackPage = () => {
     fetchData();
   }, [id]);
 
-  const isClanSelf = (track: TrackInfo) => track.self_clan_id === id;
-
   const getMyResult = (track: TrackInfo) => {
     if (track.self_clan_id === id) return track.result;
     if (track.result === 0) return 0;
@@ -157,46 +155,25 @@ const ClanTrackPage = () => {
       ) : (
         <div className="space-y-3">
           {tracks.map((track) => {
-            const meIsSelf = isClanSelf(track);
-            const myResult = getMyResult(track);
+            const self = {
+              name: track.self_name || track.self_clan_id,
+              tag: track.self_tag,
+              historyPoint: track.self_history_point,
+              nowPoint: track.self_now_point,
+              rewardHistory: track.reward_info?.self_history,
+              rewardNow: track.reward_info?.self_now,
+            };
+            const rival = {
+              name: track.rival_name || track.rival_clan_id,
+              tag: track.rival_tag,
+              historyPoint: track.rival_history_point,
+              nowPoint: track.rival_now_point,
+              rewardHistory: track.reward_info?.rival_history,
+              rewardNow: track.reward_info?.rival_now,
+            };
 
-            const self = meIsSelf
-              ? {
-                  name: track.self_name || track.self_clan_id,
-                  tag: track.self_tag,
-                  historyPoint: track.self_history_point,
-                  nowPoint: track.self_now_point,
-                  rewardHistory: track.reward_info?.self_history,
-                  rewardNow: track.reward_info?.self_now,
-                }
-              : {
-                  name: track.rival_name || track.rival_clan_id,
-                  tag: track.rival_tag,
-                  historyPoint: track.rival_history_point,
-                  nowPoint: track.rival_now_point,
-                  rewardHistory: track.reward_info?.rival_history,
-                  rewardNow: track.reward_info?.rival_now,
-                };
-            const rival = meIsSelf
-              ? {
-                  name: track.rival_name || track.rival_clan_id,
-                  tag: track.rival_tag,
-                  historyPoint: track.rival_history_point,
-                  nowPoint: track.rival_now_point,
-                  rewardHistory: track.reward_info?.rival_history,
-                  rewardNow: track.reward_info?.rival_now,
-                }
-              : {
-                  name: track.self_name || track.self_clan_id,
-                  tag: track.self_tag,
-                  historyPoint: track.self_history_point,
-                  nowPoint: track.self_now_point,
-                  rewardHistory: track.reward_info?.self_history,
-                  rewardNow: track.reward_info?.self_now,
-                };
-
-            const selfColor = myResult === 1 ? 'green' : myResult === -1 ? 'red' : 'gray';
-            const rivalColor = myResult === 1 ? 'red' : myResult === -1 ? 'green' : 'gray';
+            const selfColor = track.result === 1 ? 'green' : track.result === -1 ? 'red' : 'gray';
+            const rivalColor = track.result === 1 ? 'red' : track.result === -1 ? 'green' : 'gray';
 
             const selfDiff = self.nowPoint - self.historyPoint;
             const rivalDiff = rival.nowPoint - rival.historyPoint;
@@ -215,7 +192,7 @@ const ClanTrackPage = () => {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${selfColor === 'green' ? 'bg-green-100 text-green-600' : selfColor === 'red' ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-500'}`}>
-                      {getResultIcon(myResult)}
+                      {getResultIcon(track.result)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-medium truncate ${selfColor === 'green' ? 'text-green-600' : selfColor === 'red' ? 'text-red-500' : 'text-brand-text'}`}>
@@ -264,7 +241,7 @@ const ClanTrackPage = () => {
 
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${rivalColor === 'green' ? 'bg-green-100 text-green-600' : rivalColor === 'red' ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-500'}`}>
-                      {getResultIcon(-myResult)}
+                      {getResultIcon(-track.result)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-medium truncate ${rivalColor === 'green' ? 'text-green-600' : rivalColor === 'red' ? 'text-red-500' : 'text-brand-text'}`}>
