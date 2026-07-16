@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Card, Badge } from '../../components/ui';
+import { Card, Badge, Button } from '../../components/ui';
 import { trackApi, clanApi } from '../../api';
+import { useUserStore } from '../../store/user';
 import type { TrackInfo, ClanInfo } from '../../types';
 import { timeParse } from '../../api/request';
 import {
@@ -17,6 +18,7 @@ import {
   Menu,
   Skull,
   Handshake,
+  Trash2,
 } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
@@ -25,9 +27,29 @@ const ClanTrackPage = () => {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const { setSidebarOpen } = useSidebar();
+  const isAdmin = useUserStore((s) => s.isAdmin());
   const [tracks, setTracks] = useState<TrackInfo[]>([]);
   const [clan, setClan] = useState<ClanInfo | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fetchTracks = useCallback(async () => {
+    try {
+      const data = await trackApi.clanTrack(id);
+      setTracks(data);
+    } catch {
+      setTracks([]);
+    }
+  }, [id]);
+
+  const handleDelete = async (trackId: string) => {
+    if (!confirm(t('common.confirm_delete'))) return;
+    try {
+      await trackApi.delete(trackId);
+      await fetchTracks();
+    } catch {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -279,9 +301,20 @@ const ClanTrackPage = () => {
                   </div>
                 </div>
 
-                {track.round_code && (
-                  <div className="mt-3 pt-3 border-t border-brand-border/50 flex flex-wrap items-center gap-2 text-xs text-brand-textLight">
-                    <span>{t('track.round_code')}: {track.round_code}</span>
+                {(track.round_code || isAdmin) && (
+                  <div className="mt-3 pt-3 border-t border-brand-border/50 flex flex-wrap items-center justify-between gap-2 text-xs text-brand-textLight">
+                    <span>{track.round_code ? `${t('track.round_code')}: ${track.round_code}` : ''}</span>
+                    {isAdmin && (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(track.id)}
+                        className="ml-auto"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {t('common.cancel_register')}
+                      </Button>
+                    )}
                   </div>
                 )}
               </Card>

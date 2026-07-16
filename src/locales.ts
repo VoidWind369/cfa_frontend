@@ -44,6 +44,7 @@ const locales = {
         unknown: "Unknown",
         cfa_point: "CFA Point",
         cfa_reward: "CFA Reward",
+        cancel_register: "Cancel Register",
         pagination: {
           prev: "Previous",
           next: "Next",
@@ -372,6 +373,7 @@ const locales = {
         unknown: "未知",
         cfa_point: "CFA积分",
         cfa_reward: "CFA奖惩分",
+        cancel_register: "取消登记",
         pagination: {
           prev: "上一页",
           next: "下一页",
@@ -701,6 +703,7 @@ const locales = {
         unknown: "未知",
         cfa_point: "CFA積分",
         cfa_reward: "CFA獎懲分",
+        cancel_register: "取消登記",
         pagination: {
           prev: "上一頁",
           next: "下一頁",
