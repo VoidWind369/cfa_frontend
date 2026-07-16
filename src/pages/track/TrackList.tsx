@@ -18,6 +18,7 @@ import {
   ArrowRight,
   Loader2,
   Menu,
+  Trash2,
 } from 'lucide-react';
 import { useSidebar } from '../../contexts/SidebarContext';
 
@@ -61,6 +62,17 @@ const TrackPage = () => {
       isLoadingRef.current = false;
     }
   }, [hasMore]);
+
+  const handleDelete = async (trackId: string) => {
+    if (!confirm(t('common.confirm_delete'))) return;
+    try {
+      await trackApi.delete(trackId);
+      setTracks((prev) => prev.filter((t) => t.id !== trackId));
+      setTotal((prev) => prev - 1);
+    } catch {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     const fetchInitial = async () => {
@@ -295,8 +307,28 @@ const TrackPage = () => {
                   </div>
 
                   {track.round_code && (
-                    <div className="mt-3 pt-3 border-t border-brand-border/50">
+                    <div className="mt-3 pt-3 border-t border-brand-border/50 flex flex-wrap items-center justify-between gap-2">
                       <Badge type="default">{t('track.round_code')}: {track.round_code}</Badge>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(track.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {t('common.cancel_register')}
+                      </Button>
+                    </div>
+                  )}
+                  {!track.round_code && (
+                    <div className="mt-3 pt-3 border-t border-brand-border/50 flex justify-end">
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(track.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {t('common.cancel_register')}
+                      </Button>
                     </div>
                   )}
                 </Card>
